@@ -10,7 +10,29 @@
 </head>
 
 <body>
+    <div id="root" onload="main()">
+        <h1 id="text">MEMORY</h1>
 
+        <div id="initial">
+            <img src="img/initial.png" alt="initial game image" usemap="#image-map" width="200px" height="200px">
+            <map name="image-map">
+                <area alt="30 seconds" id="30s" coords="45,43,68,154,327,63" shape="poly">
+                <area alt="60 seconds" id="60s" coords="87,217,361,233,339,112" shape="poly">
+                <area alt="90 seconds" id="90s" coords="96,272,114,381,368,298" shape="poly">
+            </map>
+        </div>
+
+        <div id="game"></div>
+
+        <div id="win">
+            <p>You won</p>
+            <button>Again</button>
+        </div>
+        <div id="lose">
+            <p>You lost</p>
+            <button>Again</button>
+        </div>
+    </div>
 </body>
 
 </html>

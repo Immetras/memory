@@ -2,3 +2,14 @@
     margin: 0;
     padding: 0;
 }
+
+.card {
+    width: 50px;
+    height: 50px;
+    background-image: url(img/0.jpg);
+}
+
+#win,
+#lose {
+    display: none;
+}

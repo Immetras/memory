@@ -23,6 +23,7 @@ function main() {
 // main game functions
 function game(time) {
     console.log("game start")
+    console.log(time + " seconds");
     const initial = document.getElementById("initial");
     const game = document.getElementById("game");
 
@@ -35,7 +36,7 @@ function game(time) {
 
     let cardImg = []
     for (let i = 0; i < size * size; i++) {
-        cardImg.splice(Math.random() * i, 0, Math.ceil((i + 1) / 2))
+        cardImg.splice(Math.random() * (i + 1), 0, Math.ceil((i + 1) / 2))
     };
     console.log(cardImg)
 
@@ -52,8 +53,9 @@ function game(time) {
 
             cards.push({
                 "pos-x": i,
-                "pos-x": j,
-                "image": cardImg[(i * 4) + j]
+                "pos-y": j,
+                "image": cardImg[(i * size) + j],
+                "found": false
             });
             game.appendChild(div);
         };
@@ -61,7 +63,67 @@ function game(time) {
     console.table(cards);
 
     // click card function
+    let clickedPrev = [];
+    let clickedAmnt = 0;
+    let foundPairs = 0;
+
     function cardClick() {
-        console.log(this.id)
+        // console.warn("click");
+        // console.log(this.id);
+        const posX = this.id.split(",")[0].split(":")[1];
+        const posY = this.id.split(",")[1].split(":")[1];
+        let clickedCard = this;
+
+        // check card image
+        for (let i = 0; i < cards.length; i++) {
+            if (posX == cards[i]["pos-x"] &&
+                posY == cards[i]["pos-y"] &&
+                clickedAmnt <= 1 &&
+                clickedPrev[3] != clickedCard.id &&
+                cards[i].found == false) {
+
+                console.log(clickedAmnt);
+                clickedAmnt++;
+
+                clickedCard.style.backgroundImage = `url(img/${cards[i]["image"]}.jpg)`;
+                console.log(`Clicked card position:\nx = ${posX}, y = ${posY}`);
+                console.log(cards[i]["image"]);
+
+                // check if card is same as previous one
+                if (clickedPrev.length > 0) {
+                    (function (next) {
+                        if (cards[i]["image"] == clickedPrev[2]) {
+
+                            console.log("same");
+                            cards[i].found = true;
+                            cards[clickedPrev[4]].found = true;
+                            foundPairs++;
+                            if (foundPairs >= size * 2) {
+                                document.getElementById("win").style.display = "flex";
+                            };
+                            next()
+                        } else {
+
+                            console.log("different");
+                            setTimeout(() => {
+                                console.log("dissapear");
+                                document.getElementById(clickedPrev[3]).style.backgroundImage = "url(img/0.jpg)";
+                                clickedCard.style.backgroundImage = "url(img/0.jpg)";
+                                next()
+                            }, 750);
+                        };
+                    }(function () {
+                        console.log("reset");
+                        clickedPrev = [];
+                        clickedAmnt = 0;
+                    })
+                    );
+                    break;
+                };
+
+                clickedPrev = [posX, posY, cards[i]["image"], clickedCard.id, i];
+            };
+        };
+
     };
 };

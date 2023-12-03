@@ -16,7 +16,7 @@ function main() {
     });
     s90.addEventListener("click", function () {
         text.innerHTML = "MEMORY (90[s])";
-        game(90);
+        game(9999999);
     });
 };
 
@@ -62,6 +62,7 @@ function game(time) {
     };
     console.table(cards);
 
+
     // click card function
     let clickedPrev = [];
     let clickedAmnt = 0;
@@ -80,7 +81,9 @@ function game(time) {
                 posY == cards[i]["pos-y"] &&
                 clickedAmnt <= 1 &&
                 clickedPrev[3] != clickedCard.id &&
-                cards[i].found == false) {
+                cards[i].found == false &&
+                lost != true &&
+                won != true) {
 
                 console.log(clickedAmnt);
                 clickedAmnt++;
@@ -89,21 +92,25 @@ function game(time) {
                 console.log(`Clicked card position:\nx = ${posX}, y = ${posY}`);
                 console.log(cards[i]["image"]);
 
+                if (timerOn != true) {
+                    timer();
+                };
+
                 // check if card is same as previous one
                 if (clickedPrev.length > 0) {
                     (function (next) {
                         if (cards[i]["image"] == clickedPrev[2]) {
-
                             console.log("same");
                             cards[i].found = true;
                             cards[clickedPrev[4]].found = true;
                             foundPairs++;
                             if (foundPairs >= size * 2) {
                                 document.getElementById("win").style.display = "flex";
+                                won = true;
                             };
                             next()
-                        } else {
 
+                        } else {
                             console.log("different");
                             setTimeout(() => {
                                 console.log("dissapear");
@@ -111,9 +118,10 @@ function game(time) {
                                 clickedCard.style.backgroundImage = "url(img/0.jpg)";
                                 next()
                             }, 750);
+
                         };
                     }(function () {
-                        console.log("reset");
+                        console.log("timer reset");
                         clickedPrev = [];
                         clickedAmnt = 0;
                     })
@@ -126,4 +134,80 @@ function game(time) {
         };
 
     };
+
+    // timer counting time to losing game
+    let timerOn = false;
+    let won = false;
+    let lost = false;
+
+    function timer() {
+        timerOn = true;
+
+        const timer = document.getElementById("timer")
+        const timerText = document.getElementById("timerText");
+        const lose = document.getElementById("lose");
+
+        timer.style.display = "flex"
+
+        const timeStart = new Date();
+        console.log("timer start", timeStart);
+
+        const timeInterval = setInterval(() => {
+            const timeNow = new Date();
+            const timeDelta = timeNow - timeStart;
+            // console.log(timeDelta)
+
+            // timer itself with minutes:secounds.milisecounds
+            let timeMil = (1000 - (timeDelta % 1000)).toString();
+            let timeSek = ((time - Math.ceil(timeDelta / 1000)) % 60).toString();
+            let timeMin = (Math.floor((Math.floor(time - (timeDelta / 1000))) / 60)).toString();
+
+            while (timeMil.length < 4) {
+                timeMil = "0" + timeMil;
+            };
+            timeMil = timeMil.substring(1, 4);
+            while (timeSek.length < 2) {
+                timeSek = "0" + timeSek;
+            };
+            while (timeMin.length < 2) {
+                timeMin = "0" + timeMin;
+            };
+
+            console.log(`${timeMin} ${timeSek} ${timeMil}`)
+            timerText.innerText = `${timeMin}:${timeSek}.${timeMil}`
+
+            // checking if time has ran out or player has won
+            if (timeDelta >= time * 1000) {
+                lost = true;
+                clearInterval(timeInterval);
+                timerText.innerText = null;
+                lose.style.display = "flex";
+            };
+            if (won == true) {
+                clearInterval(timeInterval);
+            };
+
+        }, 13);
+    };
+};
+
+// reseting the game
+function again() {
+    const game = document.getElementById("game");
+    const initial = document.getElementById("initial");
+    const win = document.getElementById("win");
+    const lose = document.getElementById("lose");
+    const text = document.getElementById("text");
+    const timer = document.getElementById("timer");
+
+    win.style.display = "none";
+    lose.style.display = "none";
+    game.style.display = "none";
+    timer.style.display = "none";
+    initial.style.display = "flex";
+
+    text.innerText = "MEMORY"
+    game.innerHTML = null;
+
+    return console.log("game reset");
 };

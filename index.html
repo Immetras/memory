@@ -11,29 +11,39 @@
 
 <body onload="main()">
     <div id="root">
-        <h1 id="text">MEMORY</h1>
+        <div id="content">
+            <h1 id="text">MEMORY</h1>
 
-        <div id="timer"></div>
+            <div id="timer">
+                <p id="timerText"></p>
+                <div id="timerBar"></div>
+            </div>
 
-        <div id="initial">
-            <img src="img/initial.png" alt="initial game image" usemap="#image-map" width="400px" height="400px">
-            <map name="image-map">
-                <area alt="30 seconds" id="30s" coords="45,43,68,154,327,63" shape="poly">
-                <area alt="60 seconds" id="60s" coords="87,217,361,233,339,112" shape="poly">
-                <area alt="90 seconds" id="90s" coords="96,272,114,381,368,298" shape="poly">
-            </map>
+            <div id="mainContent">
+                <div id="initial">
+                    <img src="img/initial.png" alt="initial game image" usemap="#image-map" width="400px" height="400px">
+                    <map name="image-map">
+                        <area alt="30 seconds" id="30s" coords="45,43,68,154,327,63" shape="poly">
+                        <area alt="60 seconds" id="60s" coords="87,217,361,233,339,112" shape="poly">
+                        <area alt="90 seconds" id="90s" coords="96,272,114,381,368,298" shape="poly">
+                    </map>
+                </div>
+
+                <div id="game"></div>
+
+                <div id="leaderboard"></div> <!-- leaderboard should show correct top 10 according to chosen game mode AND top 10 of all modes -->
+            </div>
+
+            <div id="win">
+                <p>You won</p>
+                <button onclick="again()">Play again</button>
+            </div>
+            <div id="lose">
+                <p>You lost</p>
+                <button onclick="again()">Play again</button>
+            </div>
         </div>
 
-        <div id="game"></div>
-
-        <div id="win">
-            <p>You won</p>
-            <button onclick="again()">Play again</button>
-        </div>
-        <div id="lose">
-            <p>You lost</p>
-            <button onclick="again()">Play again</button>
-        </div>
     </div>
 </body>
 

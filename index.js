@@ -1,6 +1,73 @@
-// just adding event listeners 
+// adding event listeners and cookie parser
 function main() {
     console.log("loaded")
+
+
+    // cookies
+
+    const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 99999).toUTCString();
+
+    let cookies = decodeURIComponent(document.cookie);
+
+    // change cookies into array of 3 objects with player arrays
+    cookies = cookies.split("_");
+    cookies.shift();
+
+    for (let i = 0; i < cookies.length; i++) {
+        // console.log(cookies, cookies[i])
+        cookies[i] = cookies[i].split(";")[0].split("=");
+        cookies[i][1] = cookies[i][1].split("|");
+
+        const cookieName = cookies[i][0];
+        cookies[cookieName] = cookies[i][1];
+        for (let j = 0; j < cookies[cookieName].length; j++) {
+            cookies[cookieName][j] = cookies[cookieName][j].split("-")
+        };
+    };
+
+
+    for (let i = 0; i < 3; i++) {
+        if (cookies[`top${(i + 1) * 3}0s`] == undefined) {
+            cookies[`top${(i + 1) * 3}0s`] = [];
+        };
+    };
+
+    cookies[`topAll`] = [...cookies["top30s"], ...cookies["top60s"], ...cookies["top90s"],]
+    cookies[`topAll`].sort((a, b) => a[1].localeCompare(b[1]));
+
+    for (let i = 0; i < 3; i++) {
+        cookies[`top${(i + 1) * 3}0s`].sort((a, b) => a[1].localeCompare(b[1]));
+
+        while (cookies[`top${(i + 1) * 3}0s`].length < 10) {
+            cookies[`top${(i + 1) * 3}0s`].push([]);
+        };
+    };
+
+    while (cookies[`topAll`].length < 10) {
+        cookies[`topAll`].push([]);
+    };
+    while (cookies[`topAll`].length > 10) {
+        cookies[`topAll`].pop();
+    };
+
+    console.table(cookies);
+
+    const leaderboardList = document.getElementById("leaderboardList")
+
+    for (let i = 0; i < cookies["topAll"].length; i++) {
+        if (cookies["topAll"][i + 1] == undefined) {
+            console.log("next is empty");
+            i = 9;
+        };
+        const divTr = document.createElement("tr");
+
+        divTr.className = "listElement"
+        divTr.innerHTML = `<td>${i + 1}.</td><td>${cookies["topAll"][i][0]}</td>-<td>${cookies["topAll"][i][1]}</td>`
+        leaderboardList.appendChild(divTr)
+    };
+
+
+    // event listeners
     const text = document.getElementById("text");
     const s30 = document.getElementById("30s");
     const s60 = document.getElementById("60s");

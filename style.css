@@ -115,4 +115,19 @@
     border-radius: 20px;
     border: 2px solid rgba(128, 128, 128, 0.75);
     background-color: azure;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2px;
+}
+
+#leaderboard h4 {
+    border-bottom: 5px solid black;
+    /* box-sizing: border-box; */
+    width: calc(100% - 4px);
+    left: 0;
+    padding: 4px;
 }

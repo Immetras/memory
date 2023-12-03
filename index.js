@@ -16,7 +16,7 @@ function main() {
     });
     s90.addEventListener("click", function () {
         text.innerHTML = "MEMORY (90[s])";
-        game(9999999);
+        game(999);
     });
 };
 
@@ -85,7 +85,7 @@ function game(time) {
                 lost != true &&
                 won != true) {
 
-                console.log(clickedAmnt);
+                // console.log(clickedAmnt);
                 clickedAmnt++;
 
                 clickedCard.style.backgroundImage = `url(img/${cards[i]["image"]}.jpg)`;
@@ -105,7 +105,6 @@ function game(time) {
                             cards[clickedPrev[4]].found = true;
                             foundPairs++;
                             if (foundPairs >= size * 2) {
-                                document.getElementById("win").style.display = "flex";
                                 won = true;
                             };
                             next()
@@ -139,13 +138,24 @@ function game(time) {
     let timerOn = false;
     let won = false;
     let lost = false;
+    let timeElapsed = null;
 
     function timer() {
         timerOn = true;
 
+        const lose = document.getElementById("lose");
         const timer = document.getElementById("timer")
         const timerText = document.getElementById("timerText");
-        const lose = document.getElementById("lose");
+        const timerBar = document.getElementById("timerBar");
+
+        const dtwin = document.getElementById("dtWin"); //dt
+        const dtLose = document.getElementById("dtLose"); //dt
+        dtwin.addEventListener("click", () => { //dt
+            won = true; //dt
+        }); //dt
+        dtLose.addEventListener("click", () => { //dt
+            lost = true //dt
+        }) //dt
 
         timer.style.display = "flex"
 
@@ -157,10 +167,14 @@ function game(time) {
             const timeDelta = timeNow - timeStart;
             // console.log(timeDelta)
 
+
             // timer itself with minutes:secounds.milisecounds
             let timeMil = (1000 - (timeDelta % 1000)).toString();
             let timeSek = ((time - Math.ceil(timeDelta / 1000)) % 60).toString();
             let timeMin = (Math.floor((Math.floor(time - (timeDelta / 1000))) / 60)).toString();
+            let elapsedMil = (timeDelta % 1000).toString();
+            let elapsedSek = (Math.floor(timeDelta / 1000) % 60).toString();
+            let elapsedMin = (Math.floor((Math.floor(timeDelta / 1000)) / 60)).toString();
 
             while (timeMil.length < 4) {
                 timeMil = "0" + timeMil;
@@ -172,12 +186,28 @@ function game(time) {
             while (timeMin.length < 2) {
                 timeMin = "0" + timeMin;
             };
+            while (elapsedMil.length < 4) {
+                elapsedMil = "0" + elapsedMil;
+            };
+            elapsedMil = elapsedMil.substring(1, 4);
+            while (elapsedSek.length < 2) {
+                elapsedSek = "0" + elapsedSek;
+            };
+            while (elapsedMin.length < 2) {
+                elapsedMin = "0" + elapsedMin;
+            };
 
-            console.log(`${timeMin} ${timeSek} ${timeMil}`)
+            // console.log(`${timeMin} ${timeSek} ${timeMil}`)
             timerText.innerText = `${timeMin}:${timeSek}.${timeMil}`
 
+            const timePercent = (1 - (timeDelta / (time * 1000))).toFixed(4);
+            // console.log(timePercent)
+            timerBar.style.width = timePercent * 100 + "%";
+            timerBar.style.backgroundColor = `oklch(${50 + (25 * timePercent)}% 0.1235 ${30 + (210 * timePercent)})`
+
             // checking if time has ran out or player has won
-            if (timeDelta >= time * 1000) {
+            if (timeDelta >= time * 1000 ||
+                lost == true) {
                 lost = true;
                 clearInterval(timeInterval);
                 timerText.innerText = null;
@@ -185,6 +215,10 @@ function game(time) {
             };
             if (won == true) {
                 clearInterval(timeInterval);
+                document.getElementById("win").style.display = "flex";
+                timeElapsed = `${elapsedMin}:${elapsedSek}.${elapsedMil}`;
+                console.log(timeElapsed);
+
             };
 
         }, 13);

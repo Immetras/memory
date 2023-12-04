@@ -66,6 +66,7 @@
 #win {
     background-color: oklch(78.89% 0.1788 140.88);
     border-color: oklch(47.17% 0.099 140.88);
+    /* height: 150px; */
 }
 
 #win button,
@@ -130,4 +131,12 @@
     width: calc(100% - 4px);
     left: 0;
     padding: 4px;
+}
+
+#leaderboard .listElement {
+    height: 36px;
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    justify-content: space-around;
 }

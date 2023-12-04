@@ -2,69 +2,7 @@
 function main() {
     console.log("loaded")
 
-
-    // cookies
-
-    const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 99999).toUTCString();
-
-    let cookies = decodeURIComponent(document.cookie);
-
-    // change cookies into array of 3 objects with player arrays
-    cookies = cookies.split("_");
-    cookies.shift();
-
-    for (let i = 0; i < cookies.length; i++) {
-        // console.log(cookies, cookies[i])
-        cookies[i] = cookies[i].split(";")[0].split("=");
-        cookies[i][1] = cookies[i][1].split("|");
-
-        const cookieName = cookies[i][0];
-        cookies[cookieName] = cookies[i][1];
-        for (let j = 0; j < cookies[cookieName].length; j++) {
-            cookies[cookieName][j] = cookies[cookieName][j].split("-")
-        };
-    };
-
-
-    for (let i = 0; i < 3; i++) {
-        if (cookies[`top${(i + 1) * 3}0s`] == undefined) {
-            cookies[`top${(i + 1) * 3}0s`] = [];
-        };
-    };
-
-    cookies[`topAll`] = [...cookies["top30s"], ...cookies["top60s"], ...cookies["top90s"],]
-    cookies[`topAll`].sort((a, b) => a[1].localeCompare(b[1]));
-
-    for (let i = 0; i < 3; i++) {
-        cookies[`top${(i + 1) * 3}0s`].sort((a, b) => a[1].localeCompare(b[1]));
-
-        while (cookies[`top${(i + 1) * 3}0s`].length < 10) {
-            cookies[`top${(i + 1) * 3}0s`].push([]);
-        };
-    };
-
-    while (cookies[`topAll`].length < 10) {
-        cookies[`topAll`].push([]);
-    };
-    while (cookies[`topAll`].length > 10) {
-        cookies[`topAll`].pop();
-    };
-
-    console.table(cookies);
-
-    const leaderboardList = document.getElementById("leaderboardList")
-
-    for (let i = 0; i < cookies["topAll"].length; i++) {
-        if (cookies["topAll"][i + 1] == undefined) {
-            console.log("next is empty");
-            i = 9;
-        };
-        const divTr = document.createElement("tr");
-
-        divTr.className = "listElement"
-        divTr.innerHTML = `<td>${i + 1}.</td><td>${cookies["topAll"][i][0]}</td>-<td>${cookies["topAll"][i][1]}</td>`
-        leaderboardList.appendChild(divTr)
-    };
+    displayLeadeboard("topAll")
 
 
     // event listeners
@@ -83,7 +21,7 @@ function main() {
     });
     s90.addEventListener("click", function () {
         text.innerHTML = "MEMORY (90[s])";
-        game(999);
+        game(90);
     });
 };
 
@@ -96,6 +34,8 @@ function game(time) {
 
     initial.style.display = "none";
     game.style.display = "flex";
+
+    let cookies = displayLeadeboard(`top${time}s`)
 
 
     // generating cards in size=4x4 grid in random positions
@@ -283,13 +223,102 @@ function game(time) {
             if (won == true) {
                 clearInterval(timeInterval);
                 document.getElementById("win").style.display = "flex";
+
+                // updating the cookie
                 timeElapsed = `${elapsedMin}:${elapsedSek}.${elapsedMil}`;
                 console.log(timeElapsed);
+
+
+                const playerName = prompt("Enter your name: ", "anonymous");
+                // const playerName = document.getElementById("playerName").value;
+                // console.warn(playerName);
+
+                const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 99999).toUTCString();
+
+                let cookiesJoin = []
+                cookies[`top${time}s`].push([[encodeURIComponent(playerName)], [timeElapsed]])
+
+                for (let i = 0; i < cookies[`top${time}s`].length; i++) {
+                    if (cookies[`top${time}s`][i].length != 0) {
+                        cookiesJoin.push(cookies[`top${time}s`][i].join("-"));
+                    }
+                };
+                cookiesJoin = cookiesJoin.join("|");
+
+                document.cookie = `_top${time}s=${cookiesJoin};expires=${expire}`
 
             };
 
         }, 13);
     };
+};
+
+// cookies
+function displayLeadeboard(name) {
+
+
+    let cookies = document.cookie;
+
+    // change cookies into array of 3 objects with player arrays
+    cookies = cookies.split("_");
+    cookies.shift();
+
+    for (let i = 0; i < cookies.length; i++) {
+        // console.log(cookies, cookies[i])
+        cookies[i] = cookies[i].split(";")[0].split("=");
+        cookies[i][1] = cookies[i][1].split("|");
+
+        const cookieName = cookies[i][0];
+        cookies[cookieName] = cookies[i][1];
+        for (let j = 0; j < cookies[cookieName].length; j++) {
+            cookies[cookieName][j] = cookies[cookieName][j].split("-")
+        };
+    };
+
+    for (let i = 0; i < 3; i++) {
+        if (cookies[`top${(i + 1) * 3}0s`] == undefined) {
+            cookies[`top${(i + 1) * 3}0s`] = [];
+        };
+    };
+
+    cookies[`topAll`] = [...cookies["top30s"], ...cookies["top60s"], ...cookies["top90s"],];
+    cookies[`topAll`].sort((a, b) => a[1].localeCompare(b[1]));
+
+    for (let i = 0; i < 3; i++) {
+        cookies[`top${(i + 1) * 3}0s`].sort((a, b) => a[1].localeCompare(b[1]));
+
+        while (cookies[`top${(i + 1) * 3}0s`].length < 10) {
+            cookies[`top${(i + 1) * 3}0s`].push([]);
+        };
+    };
+
+    while (cookies[`topAll`].length < 10) {
+        cookies[`topAll`].push([]);
+    };
+    while (cookies[`topAll`].length > 10) {
+        cookies[`topAll`].pop();
+    };
+
+    console.table(cookies);
+
+
+    // displaing leaderboard
+    const leaderboardList = document.getElementById("leaderboardList");
+    leaderboardList.innerHTML = null;
+
+    console.table(cookies[name]);
+    for (let i = 0; i < cookies[name].length; i++) {
+        if (cookies[name][i].length == 0) {
+            console.log(`all leaderboard positions for "${name}" shown`);
+            break;
+        };
+        const divTr = document.createElement("tr");
+
+        divTr.className = "listElement";
+        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td>-<td>${cookies["topAll"][i][1]}</td>`
+        leaderboardList.appendChild(divTr);
+    };
+    return cookies;
 };
 
 // reseting the game
@@ -309,6 +338,8 @@ function again() {
 
     text.innerText = "MEMORY"
     game.innerHTML = null;
+
+    displayLeadeboard("topAll")
 
     return console.log("game reset");
 };

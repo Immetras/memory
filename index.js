@@ -223,7 +223,11 @@ function game(time) {
                 // updating the cookie
                 timeElapsed = `${elapsedMin}:${elapsedSek}.${elapsedMil}`;
                 console.log(timeElapsed);
+                document.getElementById("playerTime").innerText = ` Your time is: ${timeElapsed}`;
 
+                const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 999999).toUTCString();
+
+                let cookiesJoin = [];
 
                 // const playerName = prompt("Enter your name: ", "anonymous");
                 (function (next) {
@@ -231,12 +235,13 @@ function game(time) {
                         next()
                     });
                 }(function () {
-                    const playerName = document.getElementById("playerName").value;
+                    let playerName = document.getElementById("playerName").value;
+                    console.log(`name ${playerName}`, playerName.length);
+                    if (playerName.length < 1) {
+                        playerName = "anonymous";
+                    };
                     console.log(`player name: ${playerName}`);
 
-                    const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 999999).toUTCString();
-
-                    let cookiesJoin = [];
                     cookies[`top${time}s`].push([[encodeURIComponent(playerName)], [timeElapsed]])
 
                     for (let i = 0; i < cookies[`top${time}s`].length; i++) {
@@ -318,7 +323,7 @@ function displayLeadeboard(name) {
         const divTr = document.createElement("tr");
 
         divTr.className = "listElement";
-        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td><td>- ${cookies["topAll"][i][1]}</td>`
+        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td><td>- ${cookies[name][i][1]}</td>`
         leaderboardList.appendChild(divTr);
     };
     console.log(`all leaderboard positions for "${name}" shown`);
@@ -333,6 +338,8 @@ function again() {
     const lose = document.getElementById("lose");
     const text = document.getElementById("text");
     const timer = document.getElementById("timer");
+    const playerTime = document.getElementById("playerTime");
+    const playerName = document.getElementById("playerName");
 
     win.style.display = "none";
     lose.style.display = "none";
@@ -342,6 +349,8 @@ function again() {
 
     text.innerText = "MEMORY"
     game.innerHTML = null;
+    playerTime.innerText = null;
+    playerName.value = null;
 
     // setTimeout(() => {
     // }, 2000);

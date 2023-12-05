@@ -47,7 +47,6 @@
     position: absolute;
     top: 50%;
     display: none;
-    height: 100px;
     width: 250px;
     border: 10px solid;
     border-radius: 50px 0;
@@ -55,27 +54,40 @@
     justify-content: center;
     align-items: center;
     font-size: xx-large;
+    padding: 5px;
 }
 
 #lose {
     background-color: oklch(62.8% 0.2326 29.23);
     border-color: oklch(44.82% 0.126 29.23);
+    height: 100px;
 
 }
 
 #win {
     background-color: oklch(78.89% 0.1788 140.88);
     border-color: oklch(47.17% 0.099 140.88);
-    height: 150px;
-    /* display: flex; */
 }
 
 #win button,
-#lose button {
+#lose button,
+#win input {
+    box-sizing: border-box;
     width: 150px;
     height: 40px;
     border-radius: 5px;
+    margin: 2px;
 
+}
+
+#win h5 {
+    font-size: large;
+}
+
+#win input {
+    text-align: center;
+    height: 27px;
+    border-color: oklch(87.17% 0.099 140.88);
 }
 
 #win button {
@@ -84,10 +96,6 @@
 
 #lose button {
     background-color: tomato;
-}
-
-#win input {
-    text-align: center;
 }
 
 #timer {
@@ -120,7 +128,7 @@
     height: 400px;
     border-radius: 20px;
     border: 2px solid rgba(128, 128, 128, 0.75);
-    background-color: azure;
+    background-color: beige;
     text-align: center;
     box-sizing: border-box;
     position: relative;
@@ -137,10 +145,11 @@
     width: calc(100% - 4px);
     left: 0;
     padding: 4px;
+    background-color: bisque;
 }
 
 .listElement td:nth-child(2) {
-    width: 100px;
+    width: 90px;
 }
 
 .listElement td:nth-child(3) {

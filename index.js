@@ -42,7 +42,7 @@ function game(time) {
     let size = 4;
 
     let cardImg = []
-    for (let i = 0; i < size * size; i++) {
+    for (let i = 0; i < size ** 2; i++) {
         cardImg.splice(Math.random() * (i + 1), 0, Math.ceil((i + 1) / 2))
     };
     console.log(cardImg)
@@ -155,14 +155,14 @@ function game(time) {
         const timerText = document.getElementById("timerText");
         const timerBar = document.getElementById("timerBar");
 
-        const dtwin = document.getElementById("dtWin"); //dt
-        const dtLose = document.getElementById("dtLose"); //dt
-        dtwin.addEventListener("click", () => { //dt
-            won = true; //dt
-        }); //dt
-        dtLose.addEventListener("click", () => { //dt
-            lost = true //dt
-        }) //dt
+        // const dtwin = document.getElementById("dtWin"); //dt
+        // const dtLose = document.getElementById("dtLose"); //dt
+        // dtwin.addEventListener("click", () => { //dt
+        // won = true; //dt
+        // }); //dt
+        // dtLose.addEventListener("click", () => { //dt
+        // lost = true //dt
+        // }) //dt
 
         timer.style.display = "flex"
 
@@ -183,25 +183,21 @@ function game(time) {
             let elapsedSek = (Math.floor(timeDelta / 1000) % 60).toString();
             let elapsedMin = (Math.floor((Math.floor(timeDelta / 1000)) / 60)).toString();
 
-            while (timeMil.length < 4) {
-                timeMil = "0" + timeMil;
-            };
+            timeMil = minimalLenght(timeMil, 4)
             timeMil = timeMil.substring(1, 4);
-            while (timeSek.length < 2) {
-                timeSek = "0" + timeSek;
-            };
-            while (timeMin.length < 2) {
-                timeMin = "0" + timeMin;
-            };
-            while (elapsedMil.length < 4) {
-                elapsedMil = "0" + elapsedMil;
-            };
+            timeSek = minimalLenght(timeSek, 2)
+            timeMin = minimalLenght(timeMin, 2)
+            elapsedMil = minimalLenght(elapsedMil, 4)
             elapsedMil = elapsedMil.substring(1, 4);
-            while (elapsedSek.length < 2) {
-                elapsedSek = "0" + elapsedSek;
-            };
-            while (elapsedMin.length < 2) {
-                elapsedMin = "0" + elapsedMin;
+            elapsedSek = minimalLenght(elapsedSek, 2)
+            elapsedMin = minimalLenght(elapsedMin, 2)
+
+            function minimalLenght(variable, length) {
+                variable = variable.toString();
+                while (variable.length < length) {
+                    variable = "0" + variable;
+                };
+                return variable;
             };
 
             // console.log(`${timeMin} ${timeSek} ${timeMil}`)
@@ -229,26 +225,33 @@ function game(time) {
                 console.log(timeElapsed);
 
 
-                const playerName = prompt("Enter your name: ", "anonymous");
-                // const playerName = document.getElementById("playerName").value;
-                // console.warn(playerName);
+                // const playerName = prompt("Enter your name: ", "anonymous");
+                (function (next) {
+                    document.getElementById("winBtn").addEventListener("click", () => {
+                        next()
+                    });
+                }(function () {
+                    const playerName = document.getElementById("playerName").value;
+                    console.log(`player name: ${playerName}`);
 
-                const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 99999).toUTCString();
+                    const expire = new Date(Date.now() + 1000 * 60 * 60 * 24 * 999999).toUTCString();
 
-                let cookiesJoin = []
-                cookies[`top${time}s`].push([[encodeURIComponent(playerName)], [timeElapsed]])
+                    let cookiesJoin = [];
+                    cookies[`top${time}s`].push([[encodeURIComponent(playerName)], [timeElapsed]])
 
-                for (let i = 0; i < cookies[`top${time}s`].length; i++) {
-                    if (cookies[`top${time}s`][i].length != 0) {
-                        cookiesJoin.push(cookies[`top${time}s`][i].join("-"));
-                    }
-                };
-                cookiesJoin = cookiesJoin.join("|");
+                    for (let i = 0; i < cookies[`top${time}s`].length; i++) {
+                        if (cookies[`top${time}s`][i].length != 0) {
+                            cookiesJoin.push(cookies[`top${time}s`][i].join("-"));
+                        };
+                    };
+                    cookiesJoin = cookiesJoin.join("|");
 
-                document.cookie = `_top${time}s=${cookiesJoin};expires=${expire}`
+                    document.cookie = `_top${time}s=${cookiesJoin};expires=${expire}`
+                    again()
+                })
+                );
 
             };
-
         }, 13);
     };
 };
@@ -309,15 +312,16 @@ function displayLeadeboard(name) {
     console.table(cookies[name]);
     for (let i = 0; i < cookies[name].length; i++) {
         if (cookies[name][i].length == 0) {
-            console.log(`all leaderboard positions for "${name}" shown`);
+            console.log(`leaderboard "${name}" has < 10 positions `);
             break;
         };
         const divTr = document.createElement("tr");
 
         divTr.className = "listElement";
-        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td>-<td>${cookies["topAll"][i][1]}</td>`
+        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td><td>- ${cookies["topAll"][i][1]}</td>`
         leaderboardList.appendChild(divTr);
     };
+    console.log(`all leaderboard positions for "${name}" shown`);
     return cookies;
 };
 
@@ -339,6 +343,8 @@ function again() {
     text.innerText = "MEMORY"
     game.innerHTML = null;
 
+    // setTimeout(() => {
+    // }, 2000);
     displayLeadeboard("topAll")
 
     return console.log("game reset");

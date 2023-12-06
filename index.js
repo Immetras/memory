@@ -242,11 +242,11 @@ function game(time) {
                     };
                     console.log(`player name: ${playerName}`);
 
-                    cookies[`top${time}s`].push([[encodeURIComponent(playerName)], [timeElapsed]])
+                    cookies[`top${time}s`].push([[encodeURIComponent(playerName)], encodeURIComponent([timeElapsed])])
 
                     for (let i = 0; i < cookies[`top${time}s`].length; i++) {
                         if (cookies[`top${time}s`][i].length != 0) {
-                            cookiesJoin.push(cookies[`top${time}s`][i].join("-"));
+                            cookiesJoin.push(cookies[`top${time}s`][i].join(":"));
                         };
                     };
                     cookiesJoin = cookiesJoin.join("|");
@@ -279,7 +279,7 @@ function displayLeadeboard(name) {
         const cookieName = cookies[i][0];
         cookies[cookieName] = cookies[i][1];
         for (let j = 0; j < cookies[cookieName].length; j++) {
-            cookies[cookieName][j] = cookies[cookieName][j].split("-")
+            cookies[cookieName][j] = cookies[cookieName][j].split(":");
         };
     };
 
@@ -323,7 +323,7 @@ function displayLeadeboard(name) {
         const divTr = document.createElement("tr");
 
         divTr.className = "listElement";
-        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td><td>- ${cookies[name][i][1]}</td>`
+        divTr.innerHTML = `<td>${i + 1}.</td><td>${decodeURIComponent(cookies[name][i][0])}</td><td>- ${decodeURIComponent(cookies[name][i][1])}</td>`
         leaderboardList.appendChild(divTr);
     };
     console.log(`all leaderboard positions for "${name}" shown`);
